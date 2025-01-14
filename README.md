@@ -1,6 +1,6 @@
-## Evaluation dataset for the paper "A Holistic Approach to Undesired Content Detection"
+## Abuse Vector Reporting Pipeline
 
-The evaluation dataset `data/samples-1680.jsonl.gz` is the test set used in [the following paper](https://arxiv.org/abs/2208.03274):
+The dataset `data/samples-1680.jsonl.gz` is the test set used in [the following paper](https://arxiv.org/abs/2208.03274):
 
 ```
 @article{openai2022moderation,
@@ -11,7 +11,7 @@ The evaluation dataset `data/samples-1680.jsonl.gz` is the test set used in [the
 }
 ```
 
-Each line contains information about one sample in a JSON object and each sample is labeled according to our taxonomy. The category label is a binary flag, but if it does not include in the JSON, it means we do not know the label.
+Each line contains information about one sample in a JSON object and each sample is labeled according to our taxonomy.
 
 | Category | Label | Definition |
 | -------- | ----- | ---------- |
@@ -23,4 +23,25 @@ Each line contains information about one sample in a JSON object and each sample
 | sexual/minors    | `S3`   | Sexual content that includes an individual who is under 18 years old. |
 | hate/threatening | `H2`   | Hateful content that also includes violence or serious harm towards the targeted group. |
 | violence/graphic | `V2`   | Violent content that depicts death, violence, or serious physical injury in extreme graphic detail. |
+| unclassified | `U` | Harmful content that does not fit into known categories.
+| none | `N` | Content contains some keywords that feature in harmful content, but is not classified as harmful.
 
+## Instructions
+The library is developed using Python 3.13.1.
+
+1) Set up virtual environment using venv
+````
+    python3 -m venv env 
+    source env/bin/activate
+````
+
+2) Install dependencies
+```
+    pip3 install -r requirements.txt
+```
+
+3) Generate report
+
+```
+    python -m generate_report 
+```

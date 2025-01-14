@@ -1,0 +1,20 @@
+Daily Report
+============
+Report Date: 2025-01-13 23:48:00
+Report Version: v1.0
+
+Summary Statistics
+------------------
+
+       category_name label  percent                                                                                                                                                      description
+S             sexual     S    14.10  Content meant to arouse sexual excitement, such as the description of sexual activity, or that promotes sexual services (excluding sex education and wellness).
+H               hate     H     9.60      Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste.
+V           violence     V     5.60                                                                Content that promotes or glorifies violence or celebrates the suffering or humiliation of others.
+S3     sexual/minors    S3     5.10                                                                                            Sexual content that includes an individual who is under 18 years old.
+HR        harassment    HR     4.50                                                  Content that may be used to torment or annoy individuals in real life, or make harassment more likely to occur.
+SH         self-harm    SH     3.20                                                 Content that promotes, encourages, or depicts acts of self-harm, such as suicide, cutting, and eating disorders.
+H2  hate/threatening    H2     2.40                                                                          Hateful content that also includes violence or serious harm towards the targeted group.
+V2  violence/graphic    V2     1.40                                                              Violent content that depicts death, violence, or serious physical injury in extreme graphic detail.
+N               none     N     0.00                                                                Content contains some keywords that feature in harmful content, but is not classified as harmful.
+U       unclassified     U     0.00                                                                                                          Harmful content that does not fit into known categories
+

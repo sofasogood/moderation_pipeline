@@ -1,0 +1,7 @@
+.env
+myenv/
+report_pipeline/__pycache__/categories.cpython-313.pyc
+report_pipeline/__pycache__/classification.cpython-313.pyc
+report_pipeline/__pycache__/content.cpython-313.pyc
+report_pipeline/__pycache__/report.cpython-313.pyc
+__pycache__/generate_report.cpython-313.pyc
