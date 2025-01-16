@@ -1,5 +1,6 @@
-from dataclasses import dataclass    
-from typing import Optional   
+from dataclasses import dataclass   
+from enum import Enum 
+from typing import Optional, List
 
 @dataclass(frozen=True)
 class Category:
@@ -67,13 +68,15 @@ class Labels:
     U = Category(
         label="U",
         category_name="unclassified",
-        description="Harmful content that does not fit into known categories"
+        description="Harmful content that does not fit into known categories",
+        requires_human_review=True
     )
     N = Category(
         label="N",
         category_name="none",
-        description="Content contains some keywords that feature in harmful content, but is not classified as harmful."
-    )
+        description="Content contains some keywords that feature in harmful content, but is not classified as harmful.",
+        requires_human_review=True
+    )   
 
 
 
@@ -103,3 +106,47 @@ class Labels:
 
       return label_list, category_name_list, description_list
       
+class ContentType(Enum):
+    QUESTION_QUERY = "Question/Query"
+    CALL_TO_ACTION = "Call_to_Action"
+    NEWS_INFORMATION = "News/Information_Sharing"
+    COMPLAINT_GRIEVANCE = "Complaint/Grievance"
+    DEBATE_ARGUMENT = "Debate/Argument"
+    EMOTIONAL_EXPRESSION = "Emotional_Expression"
+    PERSONAL_EXPERIENCE = "Personal_Experience"
+    EDUCATIONAL_CONTENT = "Educational_Content"
+    PROMOTION_ADVERTISEMENT = "Promotion/Advertisement"
+    UNCLASSIFIED = "Unclassified"
+
+    @classmethod
+    def get_prompt_format(cls) -> str:
+        return "\n".join([f"- {member.value}" for member in cls])
+
+    @classmethod
+    def as_keys(cls) -> List[str]:
+      return [content.value for content in ContentType]
+
+
+class RiskPattern(Enum):
+    DIVISIVE_CONTENT = "Divisive_Content"
+    RADICALIZATION = "Radicalization_Patterns"
+    HARASSMENT = "Harassment_Indicators"
+    SPAM = "Spam_Patterns"
+    SCAM = "Scam_Indicators"
+    DATA_MINING = "Data_Mining_Attempts"
+    COORDINATED_BEHAVIOR = "Coordinated_Behavior"
+    BAN_EVASION = "Ban_Evasion_Attempts"
+    TESTING_BOUNDARIES = "Testing_Boundaries"
+    MALICIOUS_LINKS = "Malicious_Links/External_Redirection"
+    POLICY_CIRCUMVENTION = "Content_Policy_Circumvention"
+    UNCLASSIFIED = "Unclassified"
+    NONE = "None"
+
+    @classmethod
+    def get_prompt_format(cls) -> str:
+        return "\n".join([f"- {member.value}" for member in cls])
+    
+    @classmethod
+    def as_keys(cls) -> List[str]:
+      return [pattern.value for pattern in RiskPattern]
+

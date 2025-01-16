@@ -3,13 +3,13 @@ from datetime import datetime
 import time
 import os
 from dotenv import load_dotenv
-from .categories import Labels
+from .categories import Labels, RiskPattern, ContentType
 from .content import Content, ContentClassification, ContentDataSet
 
-MODEL_NAME= "gpt-3.5-turbo"
-CLASSIFIER_VERSION="gpt3.5"
+MODEL_NAME= "gpt-4o-mini"
+CLASSIFIER_VERSION="gpt4omini-v3"
 
-load_dotenv()
+load_dotenv(override=True)
 
 class ContentClassifier:
     """
@@ -32,7 +32,11 @@ class ContentClassifier:
         """
         # In practice, this would call your ML model or classification system
         prompt = content.prompt
+        start_time = time.time()
         raw_classification = self._predict(prompt)
+        print(f"[{content.content_id}]: time for {prompt[:10]}...{prompt[-10:]}: {time.time() - start_time:.3f}")
+        
+        #classification parsing
         classification = self.parse_response(raw_classification)["classification"]
         categories = {}
         for category in Labels().as_keys():
@@ -44,14 +48,16 @@ class ContentClassifier:
             categories=categories,
             #confidence_scores=confidence,
             severity_score=classification["severity"][0],
-            classified_at=datetime.utcnow(),
+            classified_at=datetime.now(),
             classifier_version=self._classifier_version,
             classifier_id=1,
-            # metadata={
-            #     "content_length": len(content),
-            #     "language": "en",  # Would be detected
-            #     # Other relevant metadata
-            # }
+            metadata={
+                 "human_review_needed": self.needs_human_review(classification),
+                 "rationale": classification["rationale"],
+                 "content_type": classification["content_type"],
+                 "risk_patterns": classification["risk_patterns"],
+                 
+            }
         )
 
 
@@ -66,7 +72,7 @@ class ContentClassifier:
             "Analyze the following content for harmful elements:",
             f"Content: {content}",
             "\nInstructions:",
-            "1. Determine if the content contains harmful elements",
+            "1. Determine if the content contains harmful elements, along with severity and rationale.",
             "2. Choose the most appropriate classification label from:",
         ]
         # Add labels in a structured format
@@ -76,19 +82,33 @@ class ContentClassifier:
             prompt_parts.append(
                 f"   - {label}: {category}\n     Description: {description}"
             )
+        
+        prompt_parts.append(f"""Please analyze the content and classify it according to these taxonomies:
 
-         # Add emergent behavior handling with specific format
+                                1. CONTENT_TYPE (select one):
+                                {ContentType.get_prompt_format()}
+
+                                2. RISK_PATTERNS (select all that apply):
+                                {RiskPattern.get_prompt_format()}
+                                
+                            """)
+
+        
+        # Add emergent behavior handling with specific format
         prompt_parts.extend([
             "\nRequired Output Format:",
             '{"classification": {',
-            '    "label": ["<primary_label>", "<secondary_label>",....],',
+            '    "label": ["<primary_label>"],',
             '    "severity": [<severity>],',
             '    "rationale": ["<detailed_explanation>"]',
+            '    "content_type": ["<content_type>"]',
+            '    "risk_patterns": ["<risk_pattern>"]',
             '}}',
             "\nNotes:",
-            "- Provide as many labels as necessary to detect harm.",
+            "- Provide as many labels as necessary to detect harm. However, if one of the labels is 'N', pick only one label, the one that best describes the content.",
             "- Assign only one severity score. It must be an integer from 0-5",
-            "- Rationale must be a single, detailed explanation"
+            "- Rationale must be a single explanation with maximum 300 characters, be concise and precise."
+            "- Content type and risk patterns must be selected from the provided lists. If the pattern is not included in the list, select 'Unclassified'. If no patterns apply, return 'None'."
         ])
                 # Add severity guidelines with specific scoring instructions
         severity_guidelines = {
@@ -181,8 +201,6 @@ class ContentClassifier:
 
         """
         prompt = self.create_detection_prompt(content=content)
-
-        start_time = time.time()
         completion = self._client.chat.completions.create(
             model=self.model_name,
             messages=[
@@ -192,10 +210,8 @@ class ContentClassifier:
                     "content": prompt
 
                 }
-            ]
+            ],
         )
-        print(f"Taken for {content[:10]}...{content[-10:]}: {time.time() - start_time:.3f}")
-
         return (completion.choices[0].message.content)
 
 
@@ -204,41 +220,94 @@ class ContentClassifier:
         Parses the LLM response into a structured format.
         Expects response in the format specified in the prompt.
         """
+        print(llm_response)
         import re
         try:
-            # Simple patterns to match content within each field
-            label_pattern = r'"label":\s*\[(.*?)\]'
-            severity_pattern = r'"severity":\s*(\[.*?\]|\d+(?:\.\d+)?)'
-            rationale_pattern = r'"rationale":\s*(\[.*?\]|".*?")'
+            # Default values
+            labels = ["ERROR"]
+            severities = [0]
+            rationales = ["Failed to parse"]
+            content_type = [ContentType.UNCLASSIFIED]
+            risk_patterns = [RiskPattern.NONE]
             
-            # Extract each field
-            labels = re.findall(r'"(.*?)"', re.search(label_pattern, llm_response, re.DOTALL).group(1))
-            
-            # For severity, handle both array and single number
-            severity_match = re.search(severity_pattern, llm_response, re.DOTALL).group(1)
-            severities = [float(x) for x in re.findall(r'\d+(?:\.\d+)?', severity_match)]
-            
-            # For rationale, extract quoted strings
-            rationale_match = re.search(rationale_pattern, llm_response, re.DOTALL).group(1)
-            rationales = re.findall(r'"(.*?)"', rationale_match)
-            
+
+            # Label extraction with fallback
+            label_match = re.search(r'"label":\s*\[(.*?)\]', llm_response, re.DOTALL)
+            if not label_match:
+                raise ValueError(f"Could not find label field in response: {llm_response[:100]}...")
+                
+            label_content = label_match.group(1)
+            found_labels = re.findall(r'"([^"]+)"', label_content)
+            if not found_labels:
+                raise ValueError(f"Could not parse labels from content: {label_content}")
+            labels = found_labels
+
+            # Severity extraction with fallback
+            severity_match = re.search(r'"severity":\s*(\[.*?\]|\d+(?:\.\d+)?)', llm_response, re.DOTALL)
+            if not severity_match:
+                raise ValueError(f"Could not find severity field in response: {llm_response[:100]}...")
+                
+            severity_content = severity_match.group(1)
+            found_severities = [float(x) for x in re.findall(r'\d+(?:\.\d+)?', severity_content)]
+            if not found_severities:
+                raise ValueError(f"Could not parse severities from content: {severity_content}")
+            severities = found_severities
+
+
+            # Rationale extraction
+            rationale_match = re.search(r'"rationale":\s*\[\s*"([^"]*)', llm_response)
+            if not rationale_match:
+                raise ValueError(f"Could not find rationale field in response: {llm_response[:100]}...")
+            rationales = [rationale_match.group(1)]
+
+            # Content type extraction - always returns a list with at least one valid ContentType
+            type_match = re.search(r'"content_type":\s*\[(.*?)\]', llm_response, re.DOTALL)
+            if type_match:
+                type_content = type_match.group(1)
+                type_values = re.findall(r'"([^"]+)"', type_content)
+                if type_values:
+                    found_types = [
+                        ct for val in type_values
+                        for ct in ContentType
+                        if ct.value.lower() == val.strip().lower()
+                    ]
+                    content_type = found_types if found_types else [ContentType.UNCLASSIFIED]
+
+            # Risk patterns extraction - always returns a list with at least one valid RiskPattern
+            risk_match = re.search(r'"risk_patterns":\s*\[(.*?)\]', llm_response, re.DOTALL)
+            if risk_match:
+                risk_content = risk_match.group(1)
+                risk_values = re.findall(r'"([^"]+)"', risk_content)
+                if risk_values:
+                    found_patterns = [
+                        rp for val in risk_values
+                        for rp in RiskPattern
+                        if rp.value.lower() == val.strip().lower()
+                    ]
+                    risk_patterns = found_patterns if found_patterns else [RiskPattern.NONE]
+        
             return {
                 "classification": {
                     "label": labels,
                     "severity": severities,
-                    "rationale": rationales
+                    "rationale": rationales,
+                    "content_type": content_type,
+                    "risk_patterns": risk_patterns
                 }
             }
-            
+                
         except Exception as e:
-            print(f"Debug - Raw response: {repr(llm_response)}")
+            print(f"Debug - Error details for content: {str(e)} \n{llm_response}")
             return {
                 "classification": {
                     "label": ["ERROR"],
                     "severity": [0],
-                    "rationale": [f"Failed to parse LLM response: {str(e)}"]
+                    "rationale": [f"Parser error: {str(e)}"],
+                    "content_type": [ContentType.UNCLASSIFIED],
+                    "risk_patterns": [RiskPattern.NONE]
                 }
             }
+
 
       
     def update_content_dataset(self, dataset: ContentDataSet, content_id: str, prompt:str, content_classification: ContentClassification) -> None:
@@ -252,7 +321,8 @@ class ContentClassifier:
 
     def needs_human_review(self, classification: ContentClassification) -> bool:
         """Determine if content needs human review based on classification."""
-        for category in classification.categories:
-            if (self.categories[category].requires_human_review): #TODO
+        categories = Labels().as_list()
+        for category in categories:
+            if (((category.requires_human_review) and category in classification["label"])) or (classification["severity"][0]>=4): #TODO
                 return True
         return False
