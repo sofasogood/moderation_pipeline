@@ -223,7 +223,6 @@ class ReportGenerator:
 
           # Basic category info
           severity_score = category_data['severity_score'].mean()
-          print(severity_score)
           severity_level = "HIGH" if severity_score > 4.0 else "MED" if severity_score > 3.5 else "LOW"
           
           # Get content types

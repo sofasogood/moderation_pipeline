@@ -84,11 +84,11 @@ def main():
          classifier = ContentClassifier()
          data.update_classifications(classifier, parallel=True, max_workers=16, batch_size=5)
 
-   #  # Save processed data
-   #  data.save_to_pickle(
-   #      pickle_path=os.path.join(output_dir, "data.pkl"),
-   #      create_latest_link=True
-   #  )
+    # Save processed data
+    data.save_to_pickle(
+        pickle_path=os.path.join(output_dir, "data.pkl"),
+        create_latest_link=True
+    )
 
    # Generate report
     df = data.to_pandas()

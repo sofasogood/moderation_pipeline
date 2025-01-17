@@ -7,7 +7,7 @@ from .categories import Labels, RiskPattern, ContentType
 from .content import Content, ContentClassification, ContentDataSet
 
 MODEL_NAME= "gpt-4o-mini"
-CLASSIFIER_VERSION="gpt4omini-v3"
+CLASSIFIER_VERSION="gpt4omini"
 
 load_dotenv(override=True)
 
