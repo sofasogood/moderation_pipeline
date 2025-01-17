@@ -82,21 +82,21 @@ def main():
     # Run classification if not skipped
     if not args.skip_classification:
          classifier = ContentClassifier()
-         data.update_classifications(classifier, index_range=(0,10), parallel=True, max_workers=16, batch_size=5)
+         data.update_classifications(classifier, parallel=True, max_workers=16, batch_size=5)
 
-    # Save processed data
-    data.save_to_pickle(
-        pickle_path=os.path.join(output_dir, "data.pkl"),
-        create_latest_link=True
-    )
+   #  # Save processed data
+   #  data.save_to_pickle(
+   #      pickle_path=os.path.join(output_dir, "data.pkl"),
+   #      create_latest_link=True
+   #  )
 
    # Generate report
     df = data.to_pandas()
     df.to_csv('df.csv')
-   #  ReportGenerator(df).generate_report(
-   #      title=args.report_title,
-   #      keep_last_classification=args.keep_last_classification
-   #  )
+    ReportGenerator(df).generate_report(
+        title=args.report_title,
+        keep_last_classification=args.keep_last_classification
+    )
 
 
 if __name__ == "__main__":

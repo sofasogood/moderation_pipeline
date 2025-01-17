@@ -1,20 +1,115 @@
 Daily Report
 ============
-Report Date: 2025-01-15 14:39:26
+Report Date: 2025-01-16 16:50:42
 Report Version: v1.0
 
-Summary Statistics
-------------------
+1297 New Content Classifications: 1297, 168.4 % change
+Executive Summary
+-----------------
 
-      category_name label  count_legacy  count_gpt4omini  count_gpt4omini-v2  count_gpt4omini-v3                                                                                                                                                      description
-0              hate     H           162              280                 220                   0      Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste.
-1  hate/threatening    H2            41              137                 134                   0                                                                          Hateful content that also includes violence or serious harm towards the targeted group.
-2        harassment    HR            76              167                 114                   0                                                  Content that may be used to torment or annoy individuals in real life, or make harassment more likely to occur.
-3              none     N             0              946                 877                   0                                                                Content contains some keywords that feature in harmful content, but is not classified as harmful.
-4            sexual     S           237              286                 259                   0  Content meant to arouse sexual excitement, such as the description of sexual activity, or that promotes sexual services (excluding sex education and wellness).
-5     sexual/minors    S3            85              135                 110                   0                                                                                            Sexual content that includes an individual who is under 18 years old.
-6         self-harm    SH            51              132                 128                   0                                                 Content that promotes, encourages, or depicts acts of self-harm, such as suicide, cutting, and eating disorders.
-7      unclassified     U             0               22                   6                   0                                                                                                          Harmful content that does not fit into known categories
-8          violence     V            94              208                 153                   0                                                                Content that promotes or glorifies violence or celebrates the suffering or humiliation of others.
-9  violence/graphic    V2            24               36                  32                   0                                                              Violent content that depicts death, violence, or serious physical injury in extreme graphic detail.
+# Executive Summary
+
+CRITICAL ALERTS:
+- 431 critical severity incidents detected
+- 10.0 incidents with Unclassified Harm Category
+- 185.0 incidents with Unclassified Content Type
+- 9.0 incidents with Unclassified Risk Patterns
+
+TOP CATEGORIES:
+- sexual: 15 % of incidents
+- hate: 12 % of incidents
+- hate/threatening: 8 % of incidents
+
+TOP RISK PATTERNS:
+- Divisive_Content: 403 incidents
+- Harassment_Indicators: 115 incidents
+- Radicalization_Patterns: 47 incidents
+
+TOP CONTENT TYPES:
+- Debate/Argument: 428 incidents
+- News/Information_Sharing: 298 incidents
+- Emotional_Expression: 220 incidents
+
+RECOMMENDED ACTIONS:
+- Escalate investigation of 10.0 Unclassified Abuse Category incidents.
+- Review Critical incidents
+- Analyze 9.0 Unclassified Risk Patterns for emerging threats
+- Analyze 185.0 Unclassified Content Types for jailbreak risk
+
+
+
+Detailed Analysis: Critical and Emerging Patterns
+-------------------------------------------------
+
+╒══════════════════╤═════════╤═══════╤══════════════════════════╤════════════════════════════════╤═════════════════════════════════════════════╕
+│ Category         │   Count │ Sev   │ Content Types            │ Critical Patterns              │ Emerging                                    │
+╞══════════════════╪═════════╪═══════╪══════════════════════════╪════════════════════════════════╪═════════════════════════════════════════════╡
+│ hate             │     200 │ LOW   │ - - Debate/Argument      │ - - **Divisive_Content**(91%)  │ - * [!]Spam_Patterns                        │
+│                  │         │       │                          │                                │ - * [!]Scam_Indicators                      │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ hate/threatening │     138 │ HIGH  │ - - Debate/Argument      │ - - **Divisive_Content**(76%)  │ - * [!]Scam_Indicators                      │
+│                  │         │       │                          │                                │ - * [!]Coordinated_Behavior                 │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ harassment       │     134 │ LOW   │ - - Debate/Argument      │ - - Divisive_Content(34%)      │ - * [!]Radicalization_Patterns              │
+│                  │         │       │                          │ - - Harassment_Indicators(58%) │ - * [!]Spam_Patterns                        │
+│                  │         │       │                          │                                │ - * [!]Malicious_Links/External_Redirection │
+│                  │         │       │                          │                                │ - * [!]Content_Policy_Circumvention         │
+│                  │         │       │                          │                                │ - * [!]Unclassified                         │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ sexual           │     258 │ MED   │ - - Unclassified         │ - - **None**(76%)              │ - * [!]Malicious_Links/External_Redirection │
+│                  │         │       │                          │                                │ - * [!]Content_Policy_Circumvention         │
+│                  │         │       │                          │                                │ - * [!]Unclassified                         │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ sexual/minors    │     120 │ HIGH  │ - - Unclassified         │ - - **None**(92%)              │ - * [!]Divisive_Content                     │
+│                  │         │       │                          │                                │ - * [!]Harassment_Indicators                │
+│                  │         │       │                          │                                │ - * [!]Scam_Indicators                      │
+│                  │         │       │                          │                                │ - * [!]Content_Policy_Circumvention         │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ self-harm        │     118 │ LOW   │ - - Emotional_Expression │ - - **None**(97%)              │ - * [!]Divisive_Content                     │
+│                  │         │       │ - - Personal_Experience  │                                │ - * [!]Harassment_Indicators                │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ unclassified     │      10 │ LOW   │ - - Unclassified         │ - - **None**(70%)              │ - * [!]Scam_Indicators                      │
+│                  │         │       │                          │                                │ - * [!]Malicious_Links/External_Redirection │
+│                  │         │       │                          │                                │ - * [!]Unclassified                         │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ violence         │     134 │ MED   │                          │ - - Divisive_Content(44%)      │ - * [!]Coordinated_Behavior                 │
+│                  │         │       │                          │ - - None(46%)                  │ - * [!]Malicious_Links/External_Redirection │
+│                  │         │       │                          │                                │ - * [!]Unclassified                         │
+├──────────────────┼─────────┼───────┼──────────────────────────┼────────────────────────────────┼─────────────────────────────────────────────┤
+│ violence/graphic │      32 │ HIGH  │ - - Unclassified         │ - - **None**(81%)              │ - * [!]Divisive_Content                     │
+│                  │         │       │                          │                                │ - * [!]Harassment_Indicators                │
+│                  │         │       │                          │                                │ - * [!]Malicious_Links/External_Redirection │
+│                  │         │       │                          │                                │ - * [!]Unclassified                         │
+╘══════════════════╧═════════╧═══════╧══════════════════════════╧════════════════════════════════╧═════════════════════════════════════════════╛
+
+
+Unclassified Harm Category Incidents
+------------------------------------
+
+Content IDs: 
+1a793434-07e6-45f6-9f72-e38a8e1630dc
+2de85809-cf15-4656-b86b-49b86c5fcdf3
+88c47c0e-d9ee-4f34-bd1c-e2a9587344b2
+5fa10e64-3ca2-4bbb-8f30-d70f024dd738
+33701398-aea2-45ae-b55f-10c48e44631c
+afabd5d2-a65f-4734-b2a4-c1bbef21610b
+a31a0cd3-7376-4c00-8a50-d9ff19df93c3
+3b7380ed-7f25-4163-babd-5f936c88ebc4
+4c03cbce-3945-4285-b159-e2964ac71429
+900c7b8e-5058-46fe-be17-6424b59c958b
+
+
+Unclassified Risk Pattern Incidents
+-----------------------------------
+
+Content IDs: 
+2ebcddde-1c82-4f87-8f1a-5021b63abeb0
+1fb504c8-ad2f-43a1-b6fc-15c69e9e2a3d
+204ad451-73d8-42e6-bf30-b95a804d7c48
+d49a5569-cc62-4e11-97fd-14202ce8bf3b
+0e801ba0-27a5-4c1c-b294-9c6578945acd
+844e37a3-376e-48b8-812f-c1b3ebe0527c
+71b91573-b422-420c-bc04-30b26c6d3c12
+900c7b8e-5058-46fe-be17-6424b59c958b
+bed66c40-3e5b-4bf7-a666-c7297790a6cf
 

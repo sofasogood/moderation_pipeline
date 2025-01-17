@@ -147,7 +147,6 @@ class ContentDataSet:
                 "needs_human_review": (classification.metadata or {}).get("human_review_needed", "N/A"),
 
             }
-        print (classification)
         for category_label, score in classification.categories.items():
                 row_dict[f"{category_label}"] = score
         
@@ -160,7 +159,7 @@ class ContentDataSet:
             if len(ct) > 0:  # Skip empty keys
                 # Convert enum values to strings for comparison
                 content_type_values = [ct_enum.value for ct_enum in content_types]
-                row_dict[ct] = 1.0 if ct in content_type_values else 0.0
+                row_dict[f"CONTENT_TYPE_{ct}"] = 1.0 if ct in content_type_values else 0.0
         
         # Handle risk patterns
         risk_patterns = (classification.metadata or {}).get("risk_patterns", [RiskPattern.UNCLASSIFIED])
@@ -171,7 +170,7 @@ class ContentDataSet:
             if len(rp) > 0:  # Skip empty keys
                 # Convert enum values to strings for comparison
                 risk_pattern_values = [rp_enum.value for rp_enum in risk_patterns]
-                row_dict[rp] = 1.0 if rp in risk_pattern_values else 0.0
+                row_dict[f"RISK_PATTERN_{rp}"] = 1.0 if rp in risk_pattern_values else 0.0
 
 
         records.append(row_dict)

@@ -79,7 +79,6 @@ class Labels:
     )   
 
 
-
     def as_list(self):
       categories = []
       for attr_name in dir(self):
@@ -89,6 +88,10 @@ class Labels:
                 categories.append(attr)
       return categories
 
+    def as_dict(self):
+        category_list = self.as_list()
+        return {category.label:category.category_name for category in category_list}
+    
     def as_keys(self):
       category_list = self.as_list()
       return [category.label for category in category_list]

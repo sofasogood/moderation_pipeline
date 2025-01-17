@@ -220,7 +220,6 @@ class ContentClassifier:
         Parses the LLM response into a structured format.
         Expects response in the format specified in the prompt.
         """
-        print(llm_response)
         import re
         try:
             # Default values

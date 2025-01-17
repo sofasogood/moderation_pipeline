@@ -1,5 +1,19 @@
 ## Abuse Vector Reporting Pipeline
 
+A robust Python library for content moderation, classification, and analysis with support for parallel processing and comprehensive reporting.
+Features
+
+- 🔍 Multi-category content classification 
+- 📊 Detailed risk pattern analysis
+- 📈 Comprehensive reporting capabilities
+- ⚡ Parallel processing support
+- 🔄 Incremental data processing
+- 📝 Customizable classification categories
+- 📋 Support for multiple content types
+
+
+
+
 The dataset `data/samples-1680.jsonl.gz` is the test set used in [the following paper](https://arxiv.org/abs/2208.03274):
 
 ```
@@ -10,8 +24,45 @@ The dataset `data/samples-1680.jsonl.gz` is the test set used in [the following 
   year={2022}
 }
 ```
+## Instructions
+The library is developed using Python 3.13.1.
 
-Each line contains information about one sample in a JSON object and each sample is labeled according to our taxonomy.
+0) Set up your Open AI API key in the .env file, don't add quotes. This is critical!
+```
+OPEN_AI_API_KEY=sk....
+```
+
+1) Set up virtual environment using venv
+````
+    python3 -m venv env 
+    source env/bin/activate
+````
+
+2) Install dependencies
+```
+    pip3 install -r requirements.txt
+```
+
+3) Generate report. This will generate a text file with the analysis, which automatically includes new data when added to the json.
+
+```
+    python -m generate_report 
+```
+
+
+## Key Concepts
+```
+graph LR
+    A[Input Data] --> B[ContentDataSet]
+    B --> C[ContentClassifier]
+    C --> D[Classification Results]
+    D --> E[ReportGenerator]
+    E --> F[Analysis Reports]
+  ```
+
+The library is organized into several key components:
+
+- Categories: Defines the taxonomy and classification schema
 
 | Category | Label | Definition |
 | -------- | ----- | ---------- |
@@ -26,22 +77,54 @@ Each line contains information about one sample in a JSON object and each sample
 | unclassified | `U` | Harmful content that does not fit into known categories.
 | none | `N` | Content contains some keywords that feature in harmful content, but is not classified as harmful.
 
-## Instructions
-The library is developed using Python 3.13.1.
+- Content Type: Form of communication employed in content
+    - Question/Query
+    - Call to Action 
+    - News/Information_Sharing
+    - Complaint/Grievance
+    - Debate/Argument
+    - Emotional_Expression
+    - Personal_Experience
+    - Educational_Content
+    - Promotion/Advertisement
+    - Unclassified
 
-1) Set up virtual environment using venv
-````
-    python3 -m venv env 
-    source env/bin/activate
-````
+- Classification: Handles content analysis and categorization
+  - Divisive Content
+  - Radicalization Patterns
+  - Harassment Indicators
+  - Spam Patterns
+  - Scam Indicators
+  - Data Mining Attempts
+  - Coordinated Behavior
+  - Ban Evasion Attempts
+  - Testing Boundaries
+  - Malicious Links
+  - Policy Circumvention
+ 
 
-2) Install dependencies
-```
-    pip3 install -r requirements.txt
-```
+- Report: Generates comprehensive analysis reports
 
-3) Generate report
 
+## Command Line Usage
+The library includes a command-line interface for batch processing:
 ```
-    python -m generate_report 
+python generate_report.py \
+    --input-file data/samples.jsonl.gz \
+    --pickle-path data_latest.pkl \
+    --report-title "Daily Moderation Report" \
+    --output-dir reports
 ```
+Command Line Options
+
+`--input-file`: Path to input data file (default: data/samples-1680.jsonl.gz)
+
+`--pickle-path`: Path for data serialization (default: data_latest.pkl)
+
+`--report-title`: Custom report title
+
+`--keep-last-classification`: Only use most recent classifications
+
+`--skip-classification`: Skip classification step
+
+`--output-dir`: Output directory for reports
