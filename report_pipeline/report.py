@@ -283,7 +283,6 @@ class ReportGenerator:
         ## generate data
         if sections is None:
           summary_stats = self.generate_summary_statistics(keep_last_classification=keep_last_classification)
-          #sections = [("Summary Statistics", summary_stats), ("Critical Severity Events", self.extract_abuse_patterns(data))] ## add category vs pattern heatmap
           risk_pattern_cols = [col for col in data.columns if col.startswith('RISK_PATTERN_')]
           category_cols = [col for col in data.columns if col in Labels().as_keys()]  # Add other category names as needed
           
