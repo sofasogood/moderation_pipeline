@@ -51,7 +51,7 @@ OPEN_AI_API_KEY=sk....
 
 
 ## Key Concepts
-```
+```mermaid
 graph LR
     A[Input Data] --> B[ContentDataSet]
     B --> C[ContentClassifier]
