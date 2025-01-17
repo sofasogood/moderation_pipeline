@@ -178,12 +178,7 @@ class ContentDataSet:
 
   def save_to_pickle(self, pickle_path: str = "dataframe.pkl", create_latest_link: bool = False):
       """
-      Save ContentDataSet to pickle file with timestamp and optional "latest" symlink
-      
-      Args:
-          pickle_path (str): Base path for the pickle file (default: "dataframe.pkl")
-          create_latest_link (bool): If True, creates/updates a symlink named 'latest' 
-                                  pointing to this file (default: False)
+      Save ContentDataSet to pickle file with timestamp and optional "latest" symlink   
       """
       # Split the path into directory and filename
       directory, filename = os.path.split(pickle_path)
@@ -231,7 +226,8 @@ class ContentDataSet:
   
 
   def process_content_batch(self, content_items, classifier_class, classifier_kwargs):
-    """Process a batch of content items in parallel and return updated items"""
+    """Process a batch of content items in parallel and return updated items
+        """
     # Create a new classifier instance in this process using the provided class
     classifier = classifier_class(**classifier_kwargs)
     updated_contents = []
@@ -309,7 +305,7 @@ class ContentDataSet:
                       for i, content in enumerate(updated_contents):
                           original_idx = start_idx + i
                           if index_range:
-                              # If we're working with a slice, adjust the index
+                              # adjust the index
                               original_idx = index_range[0] + original_idx
                           self.data[original_idx] = content
                       
