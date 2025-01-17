@@ -26,7 +26,6 @@ class ContentClassification:
     """
     content_id: str
     categories: Dict[str, float]
-    #confidence_scores: Dict[CategoryLabel, float]
     severity_score: float = np.nan
     classified_at: datetime = None
     classifier_version: str = None
