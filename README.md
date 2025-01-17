@@ -27,7 +27,7 @@ The dataset `data/samples-1680.jsonl.gz` is the test set used in [the following 
 ## Instructions
 The library is developed using Python 3.13.1.
 
-0) Set up your Open AI API key in the .env file, don't add quotes. This is critical!
+0) Copy and rename .env.example and fill in your API key file, don't add quotes. This is critical!
 ```
 OPEN_AI_API_KEY=sk....
 ```
@@ -43,7 +43,7 @@ OPEN_AI_API_KEY=sk....
     pip3 install -r requirements.txt
 ```
 
-3) Generate report. This will generate a text file with the analysis, which automatically includes new data when added to the json.
+3) Generate report. Note: This will take ~3-4 minutes to classify all the prompts and generate a text file with the analysis, which automatically includes new data when added to the json without reclassifying events with labels.
 
 ```
     python -m generate_report 
