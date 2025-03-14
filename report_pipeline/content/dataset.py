@@ -61,24 +61,7 @@ class ContentDataSet:
       print(f"Loaded {len(self.data)} items from pickle file.")
     else:
       print("Pickle file does not exist.")
-  
-  def process_json_data(self, file_path: str, file_type: str ="jsonl.gz"):
-    print(f"Processing new data from {file_path}")
-    all_prompts = self.get_all_prompts()
-    new_count = 0
-    if file_type == "jsonl.gz":
-      with gzip.open(file_path, 'rt') as f:
-        # Read lines and parse JSON
-        for line in f:
-          json_data = json.loads(line)
-          if json_data["prompt"] not in all_prompts:
-            content = Content.from_json(json_data)
-            self.data.append(content) 
-            new_count += 1
-      print(f"Added {new_count} new items. Total items: {len(self.data)}")
-    else:
-      raise NotImplementedError(f"file_type {file_type} not supported.")
-  
+    
   def get_all_prompts(self) -> list[str]:
     all_prompts = [content.prompt for content in self.data]
     return all_prompts
@@ -153,20 +136,3 @@ class ContentDataSet:
           except OSError as e:
               print(f"Warning: Could not create new symlink: {e}")          
   
-
-  def process_content_batch(self, content_items, classifier_class, classifier_kwargs):
-    """Process a batch of content items in parallel and return updated items
-        """
-    # Create a new classifier instance in this process using the provided class
-    classifier = classifier_class(**classifier_kwargs)
-    updated_contents = []
-    
-    for content in content_items:
-        try:
-            if content.needs_classification(classifier):
-                content.classify(classifier)
-            updated_contents.append(content)
-        except Exception as e:
-            print(f"Error processing content {content.content_id}: {str(e)}")
-    
-    return updated_contents
