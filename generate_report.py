@@ -84,7 +84,7 @@ def main():
     if os.path.exists(pickle_path):
         data.load_from_pickle(pickle_path=pickle_path)
     else:
-        data.load_from_dataset(random_sample=3000)
+        data.load_from_dataset(name = "google/civil_comments", prompt_col = "text", random_sample=3000)
     
     # Run classification if not skipped
     if not args.skip_classification:

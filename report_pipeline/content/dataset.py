@@ -39,14 +39,14 @@ class ContentDataSet:
     else:
         raise f"Content ID {content_id} does not exist."
 
-  def load_from_dataset(self, name: str = "google/civil_comments", index_range: tuple | None = None, random_sample: int | None = None):
+  def load_from_dataset(self, name: str = "google/civil_comments", prompt_col: str = "text", index_range: tuple | None = None, random_sample: int | None = None):
     dataset = load_dataset(name)["train"].to_pandas()
     if random_sample:
         dataset = dataset.sample(n=random_sample)
     if index_range:
         dataset = dataset[index_range[0]:index_range[1]]
     for idx, row in dataset.iterrows():
-        content = Content(prompt=row["text"])
+        content = Content(prompt=row[prompt_col])
         self.data.append(content)
         self._by_id[content.content_id] = content
     print(f"Loaded {len(self.data)} items from dataset.")
