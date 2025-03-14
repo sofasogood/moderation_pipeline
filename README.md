@@ -14,16 +14,8 @@ Features
 
 
 
-The dataset `data/samples-1680.jsonl.gz` is the test set used in [the following paper](https://arxiv.org/abs/2208.03274):
+The dataset `google/civil_comments` is used in the example but any dataset with a prompt/text field can be used.
 
-```
-@article{openai2022moderation,
-  title={A Holistic Approach to Undesired Content Detection},
-  author={Todor Markov and Chong Zhang and Sandhini Agarwal and Tyna Eloundou and Teddy Lee and Steven Adler and Angela Jiang and Lilian Weng},
-  journal={arXiv preprint arXiv:2208.03274},
-  year={2022}
-}
-```
 ## Instructions
 The library is developed using Python 3.13.1.
 
@@ -110,14 +102,11 @@ The library is organized into several key components:
 The library includes a command-line interface for batch processing:
 ```
 python generate_report.py \
-    --input-file data/samples.jsonl.gz \
     --pickle-path data_latest.pkl \
     --report-title "Daily Moderation Report" \
     --output-dir reports
 ```
 Command Line Options
-
-`--input-file`: Path to input data file (default: data/samples-1680.jsonl.gz)
 
 `--pickle-path`: Path for data serialization (default: data_latest.pkl)
 
