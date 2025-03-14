@@ -2,10 +2,15 @@ import os
 import argparse
 from pathlib import Path
 
-from report_pipeline.content import ContentDataSet
-from report_pipeline.classification import ContentClassifier
-from report_pipeline.report import ReportGenerator
+from report_pipeline.content.dataset import ContentDataSet
+from report_pipeline.classification.classification import ContentClassifier
+from report_pipeline.classification.classifiers.openai import OpenAIClassifier, OpenAIClassifierConfig
+from report_pipeline.classification.utils.prompt_generator import PromptGenerator
+from report_pipeline.classification.classification_runner import update_classifications_in_parallel
+from report_pipeline.report.report import ReportGenerator
+from dotenv import load_dotenv
 
+load_dotenv(override=True)
 
 def parse_args():
     """Parse command line arguments."""
@@ -70,19 +75,23 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Construct the full paths
+    # # Construct the full paths
     input_file = os.path.join(os.getcwd(), args.input_file)
     pickle_path = os.path.join(output_dir, args.pickle_path)
     
-    # Initialize and load data
     data = ContentDataSet()
-    data.load_from_pickle(pickle_path=pickle_path)
-    data.process_new_data(file_path=input_file, file_type=args.file_type)
+    # Initialize and load data
+    if os.path.exists(pickle_path):
+        data.load_from_pickle(pickle_path=pickle_path)
+    else:
+        data.load_from_dataset(random_sample=3000)
     
     # Run classification if not skipped
     if not args.skip_classification:
-         classifier = ContentClassifier()
-         data.update_classifications(classifier, parallel=True, max_workers=16, batch_size=5)
+        model = OpenAIClassifier(OpenAIClassifierConfig(model_name="gpt-4o-mini", api_key=os.environ["OPENAI_API_KEY"]))
+        prompt_generator = PromptGenerator()
+        classifier = ContentClassifier(model, prompt_generator, version="v1")
+        update_classifications_in_parallel(data, classifier, max_workers=16, batch_size=5)
 
     # Save processed data
     data.save_to_pickle(
